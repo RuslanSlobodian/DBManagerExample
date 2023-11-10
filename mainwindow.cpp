@@ -1,16 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "dbmanager.h" // Підключаємо абстрактний клас для роботи з базою даних
+#include "dbmanager.h"
 #include "sqlitedbmanager.h"
 
 #include <QSqlTableModel>
 #include <QDateTime>
 
-MainWindow::MainWindow(DBManager* dbManager, QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    db(dbManager)
-{
+MainWindow::MainWindow(DBManager* dbManager, QWidget* parent) :
+        QMainWindow(parent),
+        ui(new Ui::MainWindow),
+        db(dbManager) {
     ui->setupUi(this);
 
     /* Спочатку створюється об'єкт, який буде використовуватись для роботи з динними БД
@@ -22,7 +21,7 @@ MainWindow::MainWindow(DBManager* dbManager, QWidget *parent) :
     /* Після цього виконуємо наповнення таблиці бази даних,
      * який буде відображатись в TableView
      * */
-    for(int i = 0; i < 4; i++){
+    for (int i = 0; i < 4; i++) {
         QVariantList data;
         int random = rand(); // Отримуємо випадкові цілі числа для вставки в базу даних
         data.append(QDate::currentDate()); // Отримуємо сьогоднішню дату для вставки в БД
@@ -44,15 +43,14 @@ MainWindow::MainWindow(DBManager* dbManager, QWidget *parent) :
                                    << tr("Година")
                                    << tr("Випадкове число")
                                    << tr("Повідомлення")
-               );
+    );
 
     /* Ініціалізуємо зовнішній вигляд таблиці з даними
      * */
     this->createUI();
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
     if (model)
         delete model;
@@ -61,8 +59,7 @@ MainWindow::~MainWindow()
 
 /* Метод для ініціалізації моделі представлення даних
  * */
-void MainWindow::setupModel(const QString &tableName, const QStringList &headers)
-{
+void MainWindow::setupModel(const QString& tableName, const QStringList& headers) {
     /* Виконуємо ініціалізацію моделі представлення даних
      * з вказанням імені таблиці в базі даних, до якої
      * буде виконуватись звернення
@@ -72,16 +69,15 @@ void MainWindow::setupModel(const QString &tableName, const QStringList &headers
 
     /* Встановлюємо назви стовпців в таблиці із сортуванням даних
      * */
-    for(int i = 0, j = 0; i < model->columnCount(); i++, j++){
+    for (int i = 0, j = 0; i < model->columnCount(); i++, j++) {
         model->setHeaderData(i, Qt::Horizontal, headers[j]);
     }
     // Встановлюємо сортування по збільшення даних по нульовому стовпцю
-    model->setSort(0,Qt::AscendingOrder);
+    model->setSort(0, Qt::AscendingOrder);
 }
 
 
-void MainWindow::createUI()
-{
+void MainWindow::createUI() {
     ui->tableView->setModel(model);     // Встановлюємо модель на TableView
     ui->tableView->setColumnHidden(0, true);    // Приховуємо колонку з  id записів таблиці БД
     // Дозволяємо виділення рядків
