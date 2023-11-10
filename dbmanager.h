@@ -1,8 +1,8 @@
 #ifndef DBMANAGER_H
 #define DBMANAGER_H
 
+#include "message.h"
 #include <QSqlDatabase>
-#include <QVariantList>
 
 // Абстрактний клас (інтерфейс) для роботи з базою даних
 class DBManager {
@@ -14,7 +14,7 @@ public:
     virtual QSqlDatabase getDB() = 0;
 
     // Суто віртуальний метод для вставки записів у таблицю
-    virtual bool inserIntoTable(const QString tableName, const QVariantList& data) = 0;
+    virtual bool inserIntoTable(const Message& message) = 0;
 };
 
 #endif // DBMANAGER_H

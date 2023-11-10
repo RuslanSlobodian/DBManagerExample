@@ -25,13 +25,11 @@ private:
     /* В проекті використовуються об'єкти для взаємодії з інформацією в базі даних
      * і моделлю представлення таблиці бази даних
      * */
-    DBManager* db;
+    DBManager* dbManager;
     QSqlTableModel* model;
 
 private:
-    /* Також присутні два методи, які формують модель
-     * і зовнішній вид TableView
-     * */
+    // Також присутні два методи, які формують модель і зовнішній вид TableView
     void setupModel(const QString& tableName, const QStringList& headers);
 
     void createUI();

@@ -91,30 +91,27 @@ bool SqliteDBManager::createTables() {
         return true;
 }
 
-// Метод для вставки записів у базу даних
-bool SqliteDBManager::inserIntoTable(const QString tableName, const QVariantList& data) {
-    //Запит SQL формується із QVariantList, в який передаються данні для вставки в таблицю.
+// Метод для вставки записів у таблицю messages
+bool SqliteDBManager::inserIntoTable(const Message& message) {
+    // SQL-запит формується із об'єкта класу Message
     QSqlQuery query;
     /*
      * Спочатку SQL-запит формується з ключами, які потім зв'язуються методом bindValue
-     * для підставки даних із QVariantList
+     * для підставки даних із об'єкта класу Message
      * */
-    if (tableName == TABLE_MESSAGES) {
-        qDebug() << tableName;
-        query.prepare("INSERT INTO " TABLE_MESSAGES " ( " TABLE_MESSAGES_DATE ", "
-                      TABLE_MESSAGES_TIME ", "
-                      TABLE_MESSAGES_RANDOM_NUMBER ", "
-                      TABLE_MESSAGES_MESSAGE " ) "
-                      "VALUES (:Date, :Time, :Random, :Message )");
-        query.bindValue(":Date", data[0].toDate());
-        query.bindValue(":Time", data[1].toTime());
-        query.bindValue(":Random", data[2].toInt());
-        query.bindValue(":Message", data[3].toString());
-    }
+    query.prepare("INSERT INTO " TABLE_MESSAGES " ( " TABLE_MESSAGES_DATE ", "
+                  TABLE_MESSAGES_TIME ", "
+                  TABLE_MESSAGES_RANDOM_NUMBER ", "
+                  TABLE_MESSAGES_MESSAGE " ) "
+                  "VALUES (:Date, :Time, :RandomNumber, :Message )");
+    query.bindValue(":Date", message.getDate());
+    query.bindValue(":Time", message.getTime());
+    query.bindValue(":RandomNumber", message.getRandomNumber());
+    query.bindValue(":Message", message.getMessage());
 
     // Після чого виконується запит методом exec()
     if (!query.exec()) {
-        qDebug() << "error insert into " << tableName;
+        qDebug() << "error insert into " << TABLE_MESSAGES;
         qDebug() << query.lastError().text();
         qDebug() << query.lastQuery();
 

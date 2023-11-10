@@ -2,7 +2,6 @@
 #define DATABASE_H
 
 #include <QSqlDatabase>
-#include <QVariantList>
 
 #include "dbmanager.h"
 
@@ -24,13 +23,13 @@ public:
     static SqliteDBManager* getInstance();
 
     // Метод для підключення до бази даних
-    void connectToDataBase();
+    void connectToDataBase() override;
 
     // Метод для отримання обробника (хендлера) підключення до БД
-    QSqlDatabase getDB();
+    QSqlDatabase getDB() override;
 
     // Метод для вставки записів у таблицю
-    bool inserIntoTable(const QString tableName, const QVariantList& data);
+    bool inserIntoTable(const Message& message) override;
 
 private:
     // Обробник підключення до БД, через який буде виконуватись робота із БД

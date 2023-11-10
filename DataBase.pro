@@ -12,11 +12,13 @@ CONFIG += c++17
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
+        message.cpp \
         sqlitedbmanager.cpp
 
 HEADERS += \
         dbmanager.h \
         mainwindow.h \
+        message.h \
         sqlitedbmanager.h
 
 FORMS += \
