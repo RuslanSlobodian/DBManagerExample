@@ -10,6 +10,9 @@
 SqliteDBManager* SqliteDBManager::instance = nullptr;
 
 SqliteDBManager::SqliteDBManager() {
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setHostName(DATABASE_HOST_NAME);
+    db.setDatabaseName(DATABASE_FILE_NAME);
 }
 
 // Метод для отримання екземпляру даного класу (патерн Singleton)
@@ -25,7 +28,7 @@ void SqliteDBManager::connectToDataBase() {
     /* Перед підключенням до бази даних виконуємо перевірку на її існування.
      * В залежності від результату виконуємо відкриття бази даних або її відновлення
      * */
-    if (QFile(DATABASE_NAME).exists()) {
+    if (QFile(DATABASE_FILE_NAME).exists()) {
         this->openDataBase();
     } else {
         this->restoreDataBase();
@@ -54,11 +57,8 @@ bool SqliteDBManager::restoreDataBase() {
 // Метод для відкриття бази даних
 bool SqliteDBManager::openDataBase() {
     /* База даних відкривається по вказаному шляху
-     * і імені бази даних, якщо вона існує
+     * та імені бази даних, якщо вона існує
      * */
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setHostName(DATABASE_HOSTNAME);
-    db.setDatabaseName(DATABASE_NAME);
     if (db.open()) {
         return true;
     } else
@@ -76,15 +76,15 @@ bool SqliteDBManager::createTables() {
      * з наступним його виконанням.
      * */
     QSqlQuery query;
-    if (!query.exec("CREATE TABLE " TABLE_EXAMPLE " ("
+    if (!query.exec("CREATE TABLE " TABLE_MESSAGES " ("
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    TABLE_EXAMPLE_DATE      " DATE            NOT NULL,"
-                    TABLE_EXAMPLE_TIME      " TIME            NOT NULL,"
-                    TABLE_EXAMPLE_RANDOM    " INTEGER         NOT NULL,"
-                    TABLE_EXAMPLE_MESSAGE   " VARCHAR(255)    NOT NULL"
+                    TABLE_MESSAGES_DATE             " DATE            NOT NULL,"
+                    TABLE_MESSAGES_TIME             " TIME            NOT NULL,"
+                    TABLE_MESSAGES_RANDOM_NUMBER    " INTEGER         NOT NULL,"
+                    TABLE_MESSAGES_MESSAGE          " VARCHAR(255)    NOT NULL"
                     " )"
     )) {
-        qDebug() << "DataBase: error of create " << TABLE_EXAMPLE;
+        qDebug() << "DataBase: error of create " << TABLE_MESSAGES;
         qDebug() << query.lastError().text();
         return false;
     } else
@@ -99,12 +99,12 @@ bool SqliteDBManager::inserIntoTable(const QString tableName, const QVariantList
      * Спочатку SQL-запит формується з ключами, які потім зв'язуються методом bindValue
      * для підставки даних із QVariantList
      * */
-    if (tableName == TABLE_EXAMPLE) {
+    if (tableName == TABLE_MESSAGES) {
         qDebug() << tableName;
-        query.prepare("INSERT INTO " TABLE_EXAMPLE " ( " TABLE_EXAMPLE_DATE ", "
-                      TABLE_EXAMPLE_TIME ", "
-                      TABLE_EXAMPLE_RANDOM ", "
-                      TABLE_EXAMPLE_MESSAGE " ) "
+        query.prepare("INSERT INTO " TABLE_MESSAGES " ( " TABLE_MESSAGES_DATE ", "
+                      TABLE_MESSAGES_TIME ", "
+                      TABLE_MESSAGES_RANDOM_NUMBER ", "
+                      TABLE_MESSAGES_MESSAGE " ) "
                       "VALUES (:Date, :Time, :Random, :Message )");
         query.bindValue(":Date", data[0].toDate());
         query.bindValue(":Time", data[1].toTime());
