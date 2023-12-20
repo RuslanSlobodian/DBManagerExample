@@ -11,10 +11,13 @@ public:
     virtual void connectToDataBase() = 0;
 
     // Суто віртуальний метод для отримання обробника (хендлера) підключення до БД
-    virtual QSqlDatabase getDB() = 0;
+    virtual QSqlDatabase& getDB() = 0;
 
-    // Суто віртуальний метод для вставки записів у таблицю
+    // Суто віртуальний метод для збереження повідомлення у базі даних
     virtual bool inserIntoTable(const Message& message) = 0;
+
+    // Суто віртуальний метод для отримання повідомлення по id
+    virtual Message findMessageById(int id) = 0;
 };
 
 #endif // DBMANAGER_H

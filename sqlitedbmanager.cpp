@@ -36,7 +36,7 @@ void SqliteDBManager::connectToDataBase() {
 }
 
 // Метод для отримання обробника підключення до БД
-QSqlDatabase SqliteDBManager::getDB() {
+QSqlDatabase& SqliteDBManager::getDB() {
     return db;
 }
 
@@ -118,4 +118,22 @@ bool SqliteDBManager::inserIntoTable(const Message& message) {
         return false;
     } else
         return true;
+}
+
+// Метод для отримання повідомлення по id
+Message SqliteDBManager::findMessageById(int id) {
+    QSqlQuery query(this->db);
+    Message message;
+    // Спочатку формується SQL-запит з ключем (заповнювачем) 'id', який потім замінюється значенням методом bindValue
+    query.prepare("SELECT * FROM " TABLE_MESSAGES " WHERE id=:id");
+    query.bindValue(":id", id);
+
+    if(query.exec() && query.next()) {
+        message.setId(query.value("id").toInt());
+        message.setDate(query.value(TABLE_MESSAGES_DATE).toDate());
+        message.setTime(query.value(TABLE_MESSAGES_TIME).toTime());
+        message.setMessage(query.value(TABLE_MESSAGES_MESSAGE).toString());
+        message.setRandomNumber(query.value(TABLE_MESSAGES_RANDOM_NUMBER).toInt());
+    }
+    return message;
 }

@@ -26,10 +26,13 @@ public:
     void connectToDataBase() override;
 
     // Метод для отримання обробника (хендлера) підключення до БД
-    QSqlDatabase getDB() override;
+    QSqlDatabase& getDB() override;
 
     // Метод для вставки записів у таблицю
     bool inserIntoTable(const Message& message) override;
+
+    // Метод для отримання повідомлення по id
+    Message findMessageById(int id) override;
 
 private:
     // Обробник підключення до БД, через який буде виконуватись робота із БД
