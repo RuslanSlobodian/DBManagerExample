@@ -5,6 +5,7 @@
 #include <QTime>
 
 class Message {
+    int id;
     QDate date;
     QTime time;
     QString message;
@@ -12,6 +13,12 @@ class Message {
 
 public:
     Message();
+
+    Message(int id, const QDate& date, const QTime& time, const QString& message, int randomNumber);
+
+    int getId() const;
+
+    void setId(int id);
 
     QDate getDate() const;
 
@@ -28,6 +35,8 @@ public:
     int getRandomNumber() const;
 
     void setRandomNumber(int randomNumber);
+
+    QString toString();
 };
 
 #endif // MESSAGE_H

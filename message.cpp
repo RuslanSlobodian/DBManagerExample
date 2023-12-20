@@ -1,7 +1,18 @@
 #include "message.h"
 
 Message::Message() {
+}
 
+Message::Message(int id, const QDate& date, const QTime& time, const QString& message, int randomNumber) :
+    id(id), date(date), time(time), message(message), randomNumber(randomNumber) {
+}
+
+int Message::getId() const {
+    return id;
+}
+
+void Message::setId(int id) {
+    this->id = id;
 }
 
 QDate Message::getDate() const {
@@ -34,6 +45,16 @@ int Message::getRandomNumber() const {
 
 void Message::setRandomNumber(int randomNumber) {
     this->randomNumber = randomNumber;
+}
+
+QString Message::toString()
+{
+    return "Message(id: " + QString::number(id) +
+           ", date: " + date.toString() +
+           ", time: " + time.toString() +
+           ", message: " + message +
+           ", randomNumber" + QString::number(randomNumber) +
+           ")";
 }
 
 
