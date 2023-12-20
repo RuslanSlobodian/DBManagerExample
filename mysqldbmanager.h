@@ -1,13 +1,13 @@
-#ifndef SQLITE_DB_MANAGER_H
-#define SQLITE_DB_MANAGER_H
-
-#include <QSqlDatabase>
+#ifndef MYSQL_DB_MANAGER_H
+#define MYSQL_DB_MANAGER_H
 
 #include "dbmanager.h"
 
 /* Директиви імен таблиці, полів таблиці і бази даних */
-#define DATABASE_HOST_NAME   "ExampleDataBase"
-#define DATABASE_FILE_NAME   "DataBase.sqlite"
+#define DATABASE_HOST_NAME  "127.0.0.1"
+#define DATABASE_NAME       "db_manager_example"
+#define DATABASE_USER_NAME  "root"
+#define DATABASE_PASSWORD   ""
 
 #define TABLE_MESSAGES                   "messages"
 #define TABLE_MESSAGES_DATE              "date"
@@ -15,12 +15,12 @@
 #define TABLE_MESSAGES_MESSAGE           "message"
 #define TABLE_MESSAGES_RANDOM_NUMBER     "random_number"
 
-// Клас, який реалізує логіку абстрактного класу DBManager для роботи із БД SQLite
-class SqliteDBManager : public DBManager {
+// Клас, який реалізує логіку абстрактного класу DBManager для роботи із БД MySQL
+class MySqlDBManager : public DBManager {
 
 public:
     // Метод для отримання екземпляру даного класу (патерн Singleton)
-    static SqliteDBManager* getInstance();
+    static MySqlDBManager* getInstance();
 
     // Метод для підключення до бази даних
     void connectToDataBase() override;
@@ -38,10 +38,10 @@ private:
     // Обробник підключення до БД, через який буде виконуватись робота із БД
     QSqlDatabase db;
 
-    static SqliteDBManager* instance;
+    static MySqlDBManager* instance;
 
     // Приватний конструктор
-    SqliteDBManager();
+    MySqlDBManager();
 
     // Внутрішні методи для роботи з базою даних
     bool openDataBase();
@@ -50,4 +50,4 @@ private:
     bool createTables();
 };
 
-#endif // SQLITE_DB_MANAGER_H
+#endif // MYSQL_DB_MANAGER_H

@@ -1,14 +1,15 @@
 #include "mainwindow.h"
 #include "sqlitedbmanager.h"
+#include "mysqldbmanager.h"
 #include <QApplication>
 
 int main(int argc, char* argv[]) {
     QApplication application(argc, argv);
-
+qDebug() << QSqlDatabase::drivers();
     /*  Отримуємо вказівник на об'єкт класу SqliteDBManager для роботи із локальною БД SQLite,
      *  який використовуємо через інтерфейс (абстрактний клас) DBManager
      * */
-    DBManager* dbManager = SqliteDBManager::getInstance();
+    DBManager* dbManager = MySqlDBManager::getInstance();
     // Підключаємось до бази даних
     dbManager->connectToDataBase();
 

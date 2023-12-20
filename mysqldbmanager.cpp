@@ -1,4 +1,4 @@
-#include "sqlitedbmanager.h"
+#include "mysqldbmanager.h"
 
 #include <QObject>
 #include <QSqlQuery>
@@ -7,28 +7,30 @@
 #include <QDate>
 #include <QDebug>
 
-SqliteDBManager* SqliteDBManager::instance = nullptr;
+MySqlDBManager* MySqlDBManager::instance = nullptr;
 
-SqliteDBManager::SqliteDBManager() {
-    db = QSqlDatabase::addDatabase("QSQLITE");
+MySqlDBManager::MySqlDBManager() {
+    db = QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName(DATABASE_HOST_NAME);
-    db.setDatabaseName(DATABASE_FILE_NAME);
+    db.setDatabaseName(DATABASE_NAME);
+    db.setUserName(DATABASE_USER_NAME);
+    db.setPassword(DATABASE_PASSWORD);
 }
 
 // Метод для отримання екземпляру даного класу (патерн Singleton)
-SqliteDBManager* SqliteDBManager::getInstance() {
+MySqlDBManager* MySqlDBManager::getInstance() {
     if (instance == nullptr) {
-        instance = new SqliteDBManager();
+        instance = new MySqlDBManager();
     }
     return instance;
 }
 
 // Метод для підключення до бази даних
-void SqliteDBManager::connectToDataBase() {
+void MySqlDBManager::connectToDataBase() {
     /* Перед підключенням до бази даних виконуємо перевірку на її існування.
      * В залежності від результату виконуємо відкриття бази даних або її відновлення
      * */
-    if (QFile(DATABASE_FILE_NAME).exists()) {
+    if (QFile(DATABASE_NAME).exists()) {
         this->openDataBase();
     } else {
         this->restoreDataBase();
@@ -36,12 +38,12 @@ void SqliteDBManager::connectToDataBase() {
 }
 
 // Метод для отримання обробника підключення до БД
-QSqlDatabase& SqliteDBManager::getDB() {
+QSqlDatabase& MySqlDBManager::getDB() {
     return db;
 }
 
 // Метод відновлення бази даних
-bool SqliteDBManager::restoreDataBase() {
+bool MySqlDBManager::restoreDataBase() {
     if (this->openDataBase()) {
         if (!this->createTables()) {
             return false;
@@ -55,7 +57,7 @@ bool SqliteDBManager::restoreDataBase() {
 }
 
 // Метод для відкриття бази даних
-bool SqliteDBManager::openDataBase() {
+bool MySqlDBManager::openDataBase() {
     /* База даних відкривається по вказаному шляху
      * та імені бази даних, якщо вона існує
      * */
@@ -66,12 +68,12 @@ bool SqliteDBManager::openDataBase() {
 }
 
 // Метод закриття бази даних
-void SqliteDBManager::closeDataBase() {
+void MySqlDBManager::closeDataBase() {
     db.close();
 }
 
 // Метод для створення таблиці в базі даних
-bool SqliteDBManager::createTables() {
+bool MySqlDBManager::createTables() {
     /* В даному випадку використовується фурмування сирого SQL-запиту
      * з наступним його виконанням.
      * */
@@ -83,7 +85,7 @@ bool SqliteDBManager::createTables() {
                     TABLE_MESSAGES_RANDOM_NUMBER    " INTEGER         NOT NULL,"
                     TABLE_MESSAGES_MESSAGE          " VARCHAR(255)    NOT NULL"
                     " )"
-    )) {
+                    )) {
         qDebug() << "DataBase: error of create " << TABLE_MESSAGES;
         qDebug() << query.lastError().text();
         return false;
@@ -92,15 +94,14 @@ bool SqliteDBManager::createTables() {
 }
 
 // Метод для вставки записів у таблицю messages
-bool SqliteDBManager::inserIntoTable(const Message& message) {
+bool MySqlDBManager::inserIntoTable(const Message& message) {
     // SQL-запит формується із об'єкта класу Message
     QSqlQuery query;
     /*
      * Спочатку SQL-запит формується з ключами, які потім зв'язуються методом bindValue
      * для підставки даних із об'єкта класу Message
      * */
-    query.prepare("INSERT INTO " TABLE_MESSAGES " ( "
-                  TABLE_MESSAGES_DATE ", "
+    query.prepare("INSERT INTO " TABLE_MESSAGES " ( " TABLE_MESSAGES_DATE ", "
                   TABLE_MESSAGES_TIME ", "
                   TABLE_MESSAGES_RANDOM_NUMBER ", "
                   TABLE_MESSAGES_MESSAGE " ) "
@@ -122,14 +123,14 @@ bool SqliteDBManager::inserIntoTable(const Message& message) {
 }
 
 // Метод для отримання повідомлення по id
-Message SqliteDBManager::findMessageById(int id) {
+Message MySqlDBManager::findMessageById(int id) {
     QSqlQuery query(this->db);
     Message message;
     // Спочатку формується SQL-запит з ключем (заповнювачем) 'id', який потім замінюється значенням методом bindValue
     query.prepare("SELECT * FROM " TABLE_MESSAGES " WHERE id=:id");
     query.bindValue(":id", id);
 
-    if (query.exec() && query.next()) {
+    if(query.exec() && query.next()) {
         message.setId(query.value("id").toInt());
         message.setDate(query.value(TABLE_MESSAGES_DATE).toDate());
         message.setTime(query.value(TABLE_MESSAGES_TIME).toTime());

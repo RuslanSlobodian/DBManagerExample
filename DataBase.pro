@@ -13,12 +13,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         message.cpp \
+        mysqldbmanager.cpp \
         sqlitedbmanager.cpp
 
 HEADERS += \
         dbmanager.h \
         mainwindow.h \
         message.h \
+        mysqldbmanager.h \
         sqlitedbmanager.h
 
 FORMS += \
