@@ -43,7 +43,7 @@ QSqlDatabase& SqliteDBManager::getDB() {
 // Метод відновлення бази даних
 bool SqliteDBManager::restoreDataBase() {
     if (this->openDataBase()) {
-        if (!this->createTables()) {
+        if (!this->createTable()) {
             return false;
         } else {
             return true;
@@ -71,7 +71,7 @@ void SqliteDBManager::closeDataBase() {
 }
 
 // Метод для створення таблиці в базі даних
-bool SqliteDBManager::createTables() {
+bool SqliteDBManager::createTable() {
     /* В даному випадку використовується фурмування сирого SQL-запиту
      * з наступним його виконанням.
      * */

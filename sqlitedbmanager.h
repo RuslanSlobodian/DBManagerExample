@@ -47,7 +47,7 @@ private:
     bool openDataBase();
     bool restoreDataBase();
     void closeDataBase();
-    bool createTables();
+    bool createTable();
 };
 
 #endif // SQLITE_DB_MANAGER_H

@@ -12,6 +12,7 @@ MySqlDBManager* MySqlDBManager::instance = nullptr;
 MySqlDBManager::MySqlDBManager() {
     db = QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName(DATABASE_HOST_NAME);
+    db.setPort(DATABASE_PORT);
     db.setDatabaseName(DATABASE_NAME);
     db.setUserName(DATABASE_USER_NAME);
     db.setPassword(DATABASE_PASSWORD);
@@ -27,14 +28,13 @@ MySqlDBManager* MySqlDBManager::getInstance() {
 
 // Метод для підключення до бази даних
 void MySqlDBManager::connectToDataBase() {
-    /* Перед підключенням до бази даних виконуємо перевірку на її існування.
-     * В залежності від результату виконуємо відкриття бази даних або її відновлення
-     * */
-    if (QFile(DATABASE_NAME).exists()) {
-        this->openDataBase();
-    } else {
-        this->restoreDataBase();
+    // Якщо підключення вже відкрите, тоді виходимо
+    if (db.isOpen())
+        return;
+    if (!db.open()) {
+        qDebug() << "Не вдалось відкрити базу даних";
     }
+    this->createTable();
 }
 
 // Метод для отримання обробника підключення до БД
@@ -42,52 +42,30 @@ QSqlDatabase& MySqlDBManager::getDB() {
     return db;
 }
 
-// Метод відновлення бази даних
-bool MySqlDBManager::restoreDataBase() {
-    if (this->openDataBase()) {
-        if (!this->createTables()) {
-            return false;
-        } else {
-            return true;
-        }
-    } else {
-        qDebug() << "Не вдалось відновити базу даних";
-        return false;
+// Метод закриття підключення до бази даних
+void MySqlDBManager::closeDataBase() {
+    if (db.isOpen()) {
+        db.close();
     }
 }
 
-// Метод для відкриття бази даних
-bool MySqlDBManager::openDataBase() {
-    /* База даних відкривається по вказаному шляху
-     * та імені бази даних, якщо вона існує
-     * */
-    if (db.open()) {
-        return true;
-    } else
-        return false;
-}
-
-// Метод закриття бази даних
-void MySqlDBManager::closeDataBase() {
-    db.close();
-}
-
 // Метод для створення таблиці в базі даних
-bool MySqlDBManager::createTables() {
+bool MySqlDBManager::createTable() {
     /* В даному випадку використовується фурмування сирого SQL-запиту
      * з наступним його виконанням.
      * */
     QSqlQuery query;
-    if (!query.exec("CREATE TABLE " TABLE_MESSAGES " ("
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    TABLE_MESSAGES_DATE             " DATE            NOT NULL,"
-                    TABLE_MESSAGES_TIME             " TIME            NOT NULL,"
-                    TABLE_MESSAGES_RANDOM_NUMBER    " INTEGER         NOT NULL,"
-                    TABLE_MESSAGES_MESSAGE          " VARCHAR(255)    NOT NULL"
+    if (!query.exec("CREATE TABLE IF NOT EXISTS " TABLE_MESSAGES " ("
+                    "id INT AUTO_INCREMENT PRIMARY KEY, "
+                    TABLE_MESSAGES_DATE             " DATE          NOT NULL, "
+                    TABLE_MESSAGES_TIME             " TIME          NOT NULL, "
+                    TABLE_MESSAGES_RANDOM_NUMBER    " INT           NOT NULL, "
+                    TABLE_MESSAGES_MESSAGE          " VARCHAR(255)  NOT NULL"
                     " )"
-                    )) {
+    )) {
         qDebug() << "DataBase: error of create " << TABLE_MESSAGES;
         qDebug() << query.lastError().text();
+        qDebug() << query.lastQuery();
         return false;
     } else
         return true;
@@ -130,7 +108,7 @@ Message MySqlDBManager::findMessageById(int id) {
     query.prepare("SELECT * FROM " TABLE_MESSAGES " WHERE id=:id");
     query.bindValue(":id", id);
 
-    if(query.exec() && query.next()) {
+    if (query.exec() && query.next()) {
         message.setId(query.value("id").toInt());
         message.setDate(query.value(TABLE_MESSAGES_DATE).toDate());
         message.setTime(query.value(TABLE_MESSAGES_TIME).toTime());
@@ -138,4 +116,8 @@ Message MySqlDBManager::findMessageById(int id) {
         message.setRandomNumber(query.value(TABLE_MESSAGES_RANDOM_NUMBER).toInt());
     }
     return message;
+}
+
+MySqlDBManager::~MySqlDBManager() {
+    this->closeDataBase();
 }

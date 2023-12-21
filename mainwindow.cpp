@@ -64,16 +64,20 @@ void MainWindow::setupModel(const QString& tableName, const QStringList& headers
 }
 
 void MainWindow::createUI() {
-    ui->tableView->setModel(model);     // Встановлюємо модель на TableView
-    ui->tableView->setColumnHidden(0, true);    // Приховуємо колонку з  id записів таблиці БД
+    // Встановлюємо модель для TableView
+    ui->tableView->setModel(model);
+    // Приховуємо колонку з id таблиці БД
+    ui->tableView->setColumnHidden(0, true);
     // Дозволяємо виділення рядків
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     // Встановлюємо режим виділення лише одного рядка в таблиці
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     // Встановлюємо розмір колонок по вмісту
     ui->tableView->resizeColumnsToContents();
+    // Встановлюємо стратегію редагування - при подвійному кліку
     ui->tableView->setEditTriggers(QAbstractItemView::DoubleClicked);
+    // Розтягуємо останній стовпчик tableView на всю ширину вікна
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-
-    model->select(); // Виконуємо вибірку даних із таблиці
+    // Виконуємо вибірку даних із таблиці
+    model->select();
 }

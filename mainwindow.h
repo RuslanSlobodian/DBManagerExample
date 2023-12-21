@@ -31,7 +31,6 @@ private:
 private:
     // Також присутні два методи, які формують модель і зовнішній вид TableView
     void setupModel(const QString& tableName, const QStringList& headers);
-
     void createUI();
 };
 

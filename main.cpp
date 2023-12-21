@@ -5,11 +5,14 @@
 
 int main(int argc, char* argv[]) {
     QApplication application(argc, argv);
-qDebug() << QSqlDatabase::drivers();
-    /*  Отримуємо вказівник на об'єкт класу SqliteDBManager для роботи із локальною БД SQLite,
-     *  який використовуємо через інтерфейс (абстрактний клас) DBManager
-     * */
+
+    // Отримуємо вказівник на об'єкт класу SqliteDBManager для роботи із локальною СКБД SQLite,
+    // який використовуємо через інтерфейс (абстрактний клас) DBManager
+    // DBManager* dbManager = SqliteDBManager::getInstance();
+
+    // Отримуємо вказівник на об'єкт класу SqliteDBManager для роботи із СКБД MySQL
     DBManager* dbManager = MySqlDBManager::getInstance();
+
     // Підключаємось до бази даних
     dbManager->connectToDataBase();
 

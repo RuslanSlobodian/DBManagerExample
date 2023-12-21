@@ -5,6 +5,7 @@
 
 /* Директиви імен таблиці, полів таблиці і бази даних */
 #define DATABASE_HOST_NAME  "127.0.0.1"
+#define DATABASE_PORT       3306
 #define DATABASE_NAME       "db_manager_example"
 #define DATABASE_USER_NAME  "root"
 #define DATABASE_PASSWORD   ""
@@ -34,6 +35,8 @@ public:
     // Метод для отримання повідомлення по id
     Message findMessageById(int id) override;
 
+    ~MySqlDBManager();
+
 private:
     // Обробник підключення до БД, через який буде виконуватись робота із БД
     QSqlDatabase db;
@@ -47,7 +50,7 @@ private:
     bool openDataBase();
     bool restoreDataBase();
     void closeDataBase();
-    bool createTables();
+    bool createTable();
 };
 
 #endif // MYSQL_DB_MANAGER_H

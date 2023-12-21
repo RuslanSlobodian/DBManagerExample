@@ -53,7 +53,7 @@ QString Message::toString()
            ", date: " + date.toString() +
            ", time: " + time.toString() +
            ", message: " + message +
-           ", randomNumber" + QString::number(randomNumber) +
+           ", randomNumber: " + QString::number(randomNumber) +
            ")";
 }
 
